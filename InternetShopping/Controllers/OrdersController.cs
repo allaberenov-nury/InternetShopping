@@ -69,7 +69,7 @@ namespace InternetShopping.Controllers
             
             if (ord == null)
             {
-                return NotFound("Error. Order is absent");
+                return NotFound("Order isn't found.");
             }
 
             if (order.Status != StatusValues.Registered)
@@ -117,7 +117,7 @@ namespace InternetShopping.Controllers
             {
                 if (!OrderExists(id))
                 {
-                    return NotFound("Oder is not found.");
+                    return NotFound("Oder isn't found.");
                 }
                 else
                 {
@@ -166,8 +166,8 @@ namespace InternetShopping.Controllers
                 
                 if (good ==null)
                 {
-                    ModelState.AddModelError("Operational error", "Good is null.");
-                    return BadRequest(ModelState);
+                   
+                    return NotFound("Good isn't found.");
                 }
 
                              

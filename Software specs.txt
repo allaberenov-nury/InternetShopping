@@ -2,4 +2,4 @@ Microsoft Visual Studio Community 2019
 VisualStudio.16.Release/16.9.4+31205.134
 ASP.NET Core 5;
 Microsoft SQL Server Express (64-bit) 15.0.2080.9
-Please, update the connection string.
+Please, correct the connection string.
