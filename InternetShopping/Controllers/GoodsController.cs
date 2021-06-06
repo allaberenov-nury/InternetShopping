@@ -1,8 +1,7 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using InternetShopping.Models;
@@ -26,6 +25,7 @@ namespace InternetShopping.Controllers
         public async Task<ActionResult<IEnumerable<Good>>> GetGoods()
         {
             return await _context.Goods
+                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -33,11 +33,12 @@ namespace InternetShopping.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Good>> GetGood(int id)
         {
-            var good = await _context.Goods.FindAsync(id);
+            var good = await _context.Goods
+                       .FindAsync(id);
 
             if (good == null)
             {
-                return NotFound();
+                return NotFound("Good isn't found.");
             }
 
             return good;
@@ -49,8 +50,10 @@ namespace InternetShopping.Controllers
         {
             if (id != good.Id)
             {
-                return BadRequest();
+                return BadRequest("Ids doesn't match.");
             }
+
+            
 
             _context.Entry(good).State = EntityState.Modified;
 
@@ -58,16 +61,20 @@ namespace InternetShopping.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException ex)
             {
                 if (!GoodExists(id))
                 {
-                    return NotFound();
+                    return NotFound("Good isn't found");
                 }
                 else
                 {
-                    throw;
+                    return BadRequest(ex.Message);
                 }
+            }
+            catch
+            {
+                return BadRequest("Error update the database.");
             }
 
             return NoContent();
@@ -88,10 +95,15 @@ namespace InternetShopping.Controllers
                 _context.Goods.Add(good);
                 await _context.SaveChangesAsync();
             }
-            catch(Exception ex)
+            catch(DbUpdateException ex)
             {
                 return BadRequest(ex.Message);
             }
+            catch 
+            {
+                return BadRequest("Error update the database");
+            }
+
             return CreatedAtAction(nameof(GetGood), new { id = good.Id }, good);
         }
 
@@ -99,13 +111,12 @@ namespace InternetShopping.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteGood(int id)
         {
-            var good = await _context.Goods
-                .Include(g => g.OrderDetails)
-               .SingleOrDefaultAsync(g => g.Id == id);
-                
+         
+            var good =await  _context.Goods.FindAsync(id);
+
             if (good == null)
             {
-                return NotFound();
+                return NotFound("Good isn't found");
             }
             
             try
@@ -113,11 +124,16 @@ namespace InternetShopping.Controllers
                 _context.Goods.Remove(good);
                 await _context.SaveChangesAsync();
             }
-            catch(Exception ex)
+            catch(DbUpdateException ex)
             {
                 return BadRequest(ex.Message);
             }
-            
+
+            catch 
+            {
+                return BadRequest("Error update the database.");
+            }
+
             return NoContent();
         }
 

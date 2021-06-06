@@ -20,12 +20,20 @@ namespace InternetShopping.Data
         public DbSet<OrderDetail> OrderDetails { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder
-                .Entity<Good>()
-                .HasMany<OrderDetail>(g => g.OrderDetails)
-                .WithOne(od => od.Good)
-                .OnDelete(DeleteBehavior.Cascade);
+            /*
+             modelBuilder
+                 .Entity<Good>()
+                 .HasMany<OrderDetail>(g => g.OrderDetails)
+                 .WithOne(od => od.Good)
+                 
             
+            modelBuilder
+                 .Entity<Order>()
+                 .HasMany<OrderDetail>(g => g.OrderDetail)
+                 .WithOne(od => od.Order)
+                 .OnDelete(DeleteBehavior.Cascade);
+            
+            .*/
         }
 
     }
